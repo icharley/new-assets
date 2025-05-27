@@ -1,7 +1,8 @@
 import { serve } from "inngest/next";
-import { inngest } from "../../../inngest/client";
+// import { inngest } from "../../../inngest/client";
 import {
-  createUserOrder,
+  //   createUserOrder,
+  inngest,
   syncUserCreation,
   syncUserDeletion,
   syncUserUpdation,
