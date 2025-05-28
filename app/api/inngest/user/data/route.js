@@ -1,6 +1,6 @@
 const { default: connectDB } = require("@/config/db");
 const { default: User } = require("@/models/User");
-const { getAuth } = require("@clerk/nextjs/dist/types/server");
+const { getAuth } = require("@clerk/nextjs/server");
 const { NextResponse } = require("next/server");
 
 export async function GET(request) {
