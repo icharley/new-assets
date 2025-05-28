@@ -1,8 +1,10 @@
 "use client";
 import { productsDummyData, userDummyData } from "@/assets/assets";
 import { useAuth, useUser } from "@clerk/nextjs"; // useAuth hook to access authentication methods to make it available everywhere in the app
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export const AppContext = createContext();
 
@@ -27,7 +29,26 @@ export const AppContextProvider = (props) => {
   };
 
   const fetchUserData = async () => {
-    setUserData(userDummyData);
+    try {
+      const token = await getToken();
+      const response = await axios.get("/api/inngest/user/data", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (data.success) {
+        setUserData(data.user);
+        setCartItems(data.user.cartItems || {});
+      } else {
+        toast.error("error.message");
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      toast.error(
+        error.message || "An error occurred while fetching user data"
+      );
+    }
   };
 
   const addToCart = async (itemId) => {
@@ -76,8 +97,10 @@ export const AppContextProvider = (props) => {
   }, []);
 
   useEffect(() => {
-    fetchUserData();
-  }, []);
+    if (user) {
+      fetchUserData();
+    }
+  }, [user]);
 
   const value = {
     user, // to access user information in another file
