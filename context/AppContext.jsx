@@ -25,29 +25,33 @@ export const AppContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
 
   const fetchProductData = async () => {
-    setProducts(productsDummyData);
+    try {
+      const { data } = await axios.get("/api/product/list");
+      if (data.success) {
+        setProducts(data.products);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   const fetchUserData = async () => {
     try {
       const token = await getToken();
-      const response = await axios.get("/api/inngest/user/data", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const { data } = await axios.get("/api/user/data", {
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (data.success) {
         setUserData(data.user);
         setCartItems(data.user.cartItems || {});
       } else {
-        toast.error("error.message");
+        toast.error(data.message);
       }
     } catch (error) {
-      console.error("Error fetching user data:", error);
-      toast.error(
-        error.message || "An error occurred while fetching user data"
-      );
+      toast.error(error.message);
     }
   };
 
